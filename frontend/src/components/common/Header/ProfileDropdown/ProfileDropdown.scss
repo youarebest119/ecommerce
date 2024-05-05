@@ -1,0 +1,59 @@
+@import "../../../../assets/theme/_var.scss";
+
+
+.profile_dropdown {
+    .dropdown-toggle {
+        background-color: transparent !important;
+        box-shadow: none;
+        border: 0.2rem solid $whiteEB !important;
+        color: $black !important;
+        padding: 0 1.8rem 0 1.2rem;
+        font-size: 1.6rem;
+        height: 4.4rem;
+        border-radius: 1.6rem;
+
+        img {
+            width: 3.6rem;
+            height: 3.6rem;
+            flex-shrink: 0;
+            margin-right: 0.4rem;
+        }
+
+        &::after {
+            content: unset;
+        }
+
+        &.show {
+            border-color: $baseclr !important;
+            background-color: $whiteF5 !important;
+        }
+    }
+
+    .dropdown-menu {
+        margin-top: 1rem;
+        width: 100% !important;
+        padding: 0.6rem;
+        border-radius: 0.8rem;
+        border: none;
+        box-shadow: 0 0 2rem 0rem rgba($black, 0.1);
+
+        hr {
+            margin: 0.6rem 0;
+            border-top-color: rgba($black10, 0.3);
+        }
+
+        a {
+            display: block;
+            padding: 0.6rem 1.2rem;
+            color: rgba($black, 0.6);
+            font-size: 1.6rem;
+            border-radius: 0.6rem;
+
+            &:hover,
+            &.active {
+                background-color: $whiteF5;
+                color: $black;
+            }
+        }
+    }
+}

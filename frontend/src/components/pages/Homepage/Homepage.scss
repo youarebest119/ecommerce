@@ -1,0 +1,49 @@
+@import "../../../assets/theme/_var.scss";
+
+.homepage {
+    padding: 8rem 0;
+
+    .filters {
+        display: flex;
+        align-items: flex-start;
+        margin: 0 0 2rem;
+
+        .search_input {
+            display: flex;
+            align-items: flex-start;
+
+            button {
+                margin-left: 0.8rem;
+            }
+        }
+
+        .filter_btn {
+            position: relative;
+
+            span {
+                position: absolute;
+                top: 0;
+                right: 0;
+                background-color: $white;
+                border-radius: 50%;
+                border: 2px solid rgba($baseclr, 0.6);
+                color: rgba($baseclr, 1);
+                width: 2rem;
+                height: 2rem;
+                font-size: 1.2rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transform: translate(50%, -50%);
+            }
+        }
+
+        >button {
+            margin-left: 0.8rem;
+        }
+    }
+
+    .products {
+        overflow: visible !important;
+    }
+}

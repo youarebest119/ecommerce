@@ -1,0 +1,25 @@
+@import "../../../../assets/theme/_var.scss";
+
+.search_by_modal {
+    .modal-dialog {
+        max-width: 32rem;
+
+        .modal-content {
+            padding: 1.6rem;
+
+            .modal-header {
+                padding: 0 0.8rem 1.6rem;
+            }
+
+            .modal-body {
+                padding: 1.6rem 0.8rem 0;
+            }
+
+            form {
+                >div {
+                    margin-bottom: 1.2rem;
+                }
+            }
+        }
+    }
+}

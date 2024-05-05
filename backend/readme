@@ -1,0 +1,7 @@
+#clear database for products
+sudo mongosh;
+use ecommerce;
+db.products.deleteMany({})
+
+#start mongodb
+sudo service mongod start

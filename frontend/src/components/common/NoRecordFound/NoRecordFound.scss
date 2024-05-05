@@ -1,0 +1,12 @@
+@import "../../../assets/theme/_var.scss";
+
+.no_record_found {
+    border-radius: 1.6rem;
+    background-color: $whiteEB;
+    text-align: center;
+    padding-bottom: 4rem;
+
+    svg {
+        max-width: 16rem;
+    }
+}

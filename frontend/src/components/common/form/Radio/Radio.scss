@@ -1,0 +1,59 @@
+@import "../../../../assets/theme/_var.scss";
+
+.radio_input {
+    .radio_input_in {
+        display: flex;
+        align-items: center;
+        position: relative;
+
+        input {
+            &[type="radio"] {
+                flex-shrink: 0;
+                margin-right: 0.8rem;
+                width: 1.8rem;
+                height: 1.8rem;
+                cursor: pointer;
+                opacity: 0;
+
+                &:checked {
+                    +label {
+                        &::before {
+                            border: 2px solid $baseclr;
+                        }
+
+                        &::after {
+                            content: "";
+                            width: 0.9rem;
+                            height: 0.9rem;
+                            top: 50%;
+                            transform: translate(-50%, -50%);
+                            left: 0.9rem;
+                            border-radius: 50%;
+                            background-color: $baseclr;
+                            position: absolute;
+                        }
+                    }
+                }
+            }
+        }
+
+        label {
+            font-size: 1.6rem;
+            line-height: 2rem;
+            cursor: pointer;
+            width: 100%;
+
+            &::before {
+                content: "";
+                width: 1.8rem;
+                height: 1.8rem;
+                top: 50%;
+                transform: translate(0, -50%);
+                left: 0;
+                border-radius: 50%;
+                border: 2px solid $whiteEB;
+                position: absolute;
+            }
+        }
+    }
+}

@@ -1,0 +1,54 @@
+@import "../../../assets/theme/_var.scss";
+
+.custom_btn {
+    padding: 0 2.4rem;
+    font-size: 1.6rem;
+    font-weight: 400;
+    height: 4.4rem;
+    border-radius: 1.6rem;
+    border: 2px solid $baseclr;
+    color: $black;
+    background-color: $white;
+    outline: none;
+    transition: 200ms ease-in-out;
+    letter-spacing: 0.1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+
+    svg {
+        width: 1.8rem;
+        height: 1.8rem;
+
+        path {
+            fill: $baseclr;
+            transition: 200ms ease-in-out;
+        }
+    }
+
+    &:hover {
+        color: $white;
+        background-color: $baseclr;
+
+        svg {
+            path {
+                fill: $white;
+            }
+        }
+    }
+
+    &:disabled {
+        opacity: 0.6;
+        pointer-events: none;
+    }
+
+    &.danger_btn {
+        border-color: $danger;
+
+        &:hover {
+            background-color: $danger;
+        }
+    }
+}

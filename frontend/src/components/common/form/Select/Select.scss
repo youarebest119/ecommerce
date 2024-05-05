@@ -1,0 +1,67 @@
+@import "../../../../assets/theme/_var.scss";
+
+.custom_select {
+    label {
+        font-size: 1.4rem;
+        margin-bottom: 0.4rem;
+        line-height: 2rem;
+    }
+
+    .select__control {
+        height: 4.4rem;
+        border: 2px solid $whiteEB;
+        border-radius: 1.6rem;
+        font-size: 1.6rem;
+        font-weight: 400;
+        padding: 0 1.6rem;
+        cursor: pointer;
+        box-shadow: none;
+
+        &.select__control--menu-is-open {
+            border-color: $baseclr;
+        }
+
+        .select__value-container,
+        .select__placeholder,
+        .select__input-container {
+            margin: 0;
+            padding: 0;
+        }
+
+        .select__indicators {
+            .select__indicator-separator {
+                display: none;
+            }
+        }
+    }
+
+    .select__menu {
+        padding: 0.6rem;
+        border-radius: 0.8rem;
+
+        .select__menu-list {
+            .select__option {
+                padding: 0.6rem 1.2rem;
+                color: rgba($black, 0.6);
+                border-radius: 0.6rem;
+                font-size: 1.6rem;
+                cursor: pointer;
+                transition: 200ms ease-in-out;
+
+                &:not(:last-child) {
+                    margin-bottom: 0.1rem;
+                }
+
+                &.select__option--is-focused {
+                    background-color: transparent;
+                }
+
+                &:hover,
+                &.select__option--is-selected {
+                    background-color: $whiteF5;
+                    color: $black;
+                }
+            }
+        }
+    }
+}

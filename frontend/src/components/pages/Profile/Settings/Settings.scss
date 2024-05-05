@@ -1,0 +1,45 @@
+@import "../../../../assets/theme/_var.scss";
+
+.settings_page {
+    .profile_img {
+        width: 10rem;
+        height: 10rem;
+    }
+
+    .change_password_btn {
+        width: fit-content;
+        background-color: transparent;
+        border: none;
+        outline: none;
+        padding: 0;
+        margin-top: 1.6rem;
+        text-decoration: underline;
+    }
+
+    hr {
+        border-top-color: rgba($black, 0.3);
+        margin: 2.4rem 0;
+    }
+
+    .delete_account {
+        padding: 1.6rem;
+        border-radius: 0.8rem;
+        background-color: rgba($danger, 0.1);
+
+        h3 {
+            color: $danger;
+            margin-bottom: 1.6rem;
+        }
+
+        .delete_account_in {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            h5 {
+                font-size: 1.6rem;
+                font-weight: 400;
+            }
+        }
+    }
+}

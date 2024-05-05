@@ -1,0 +1,27 @@
+@import "../../../../assets/theme/_var.scss";
+
+.custom_input {
+    label {
+        font-size: 1.4rem;
+        margin-bottom: 0.4rem;
+        line-height: 2rem;
+    }
+
+    .custom_input_in {
+        input {
+            font-size: 1.6rem;
+            font-weight: 400;
+            padding: 0 1.6rem;
+            border-radius: 1.6rem;
+            height: 4.4rem;
+            width: 100%;
+            border: 2px solid $whiteEB;
+            outline: none;
+            transition: 200ms ease-in-out;
+
+            &:focus {
+                border-color: $baseclr;
+            }
+        }
+    }
+}

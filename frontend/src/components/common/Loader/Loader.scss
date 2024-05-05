@@ -1,0 +1,25 @@
+@import "../../../assets/theme/_var.scss";
+
+.overlayloader {
+    width: 100%;
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 50%;
+    margin-top: -1px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 9991;
+    height: 102%;
+    background: rgba(0, 0, 0, 0);
+    backdrop-filter: blur(0.3rem);
+
+    .spinner-border {
+        width: 3.6rem;
+        height: 3.6rem;
+        border-color: $baseclr;
+        border-right-color: transparent;
+    }
+}

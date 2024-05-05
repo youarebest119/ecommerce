@@ -1,0 +1,57 @@
+@import '../../../assets/theme/_var.scss';
+
+.filters_applied_list {
+    margin: 0 0 2rem;
+
+    ul {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        margin: -0.8rem;
+
+        li {
+            padding: 0.8rem;
+
+            button {
+                padding: 0.2rem 1.2rem;
+                border-radius: 1rem;
+                font-size: 1.4rem;
+                border: 2px solid $whiteEB;
+                background-color: rgba($whiteEB, 0.3);
+                transition: 200ms ease-in-out;
+                position: relative;
+
+                &::before {
+                    content: "";
+                    background-image: url(../../../assets/icons/cross.svg);
+                    background-size: 100%;
+                    background-position: center;
+                    background-repeat: no-repeat;
+                    opacity: 0;
+                    visibility: hidden;
+                    transition: 200ms ease-in-out;
+                    position: absolute;
+                    right: 0;
+                    top: 0;
+                    transform: translate(50%, -50%);
+                    width: 1.6rem;
+                    height: 1.6rem;
+                    line-height: 1;
+                    background-color: rgba($danger, 0.1);
+                    border-radius: 50%;
+                    position: absolute;
+                }
+
+                &:hover {
+                    border-color: rgba($danger, 0.6);
+                    background-color: rgba($danger, 0.1);
+
+                    &::before {
+                        opacity: 1;
+                        visibility: visible;
+                    }
+                }
+            }
+        }
+    }
+}
