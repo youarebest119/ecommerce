@@ -16,11 +16,11 @@ const EmailSentModal = (props: TEmailSentModal) => {
             <h4>Email Sent to
                 &nbsp;
                 <Link
-                    to={"lovepreet.singh@antiersolutions.com"}
+                    to={`https://mail.google.com/mail/u/${props.email}/#inbox`}
                     target="_blank"
                     rel="noreferrer"
                 >
-                    {"lovepreet.singh@antiersolutions.com"}
+                    {props.email}
                 </Link>&nbsp;
                 Successfully.</h4>
         </CustomModal>

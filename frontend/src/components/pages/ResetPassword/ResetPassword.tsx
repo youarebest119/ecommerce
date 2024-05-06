@@ -1,4 +1,6 @@
 import { Form, Formik } from "formik";
+import { apiPut } from "../../../services/axios.service";
+import { API } from "../../../utils/constants";
 import Button from "../../common/Button/Button";
 import Password from "../../common/form/Password/Password";
 
@@ -7,7 +9,12 @@ const ResetPassword = () => {
         confirmPassword: "",
         password: "",
     };
-    const handleSubmit = () => {
+    const handleSubmit = async (values: typeof initialValues) => {
+        const response = await apiPut({
+            url: API.RESET_PASSWORD,
+            data: values,
+        })
+        console.log('response', response);
         return;
     }
     return (

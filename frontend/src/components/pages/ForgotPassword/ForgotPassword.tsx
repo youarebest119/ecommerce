@@ -3,13 +3,21 @@ import Button from "../../common/Button/Button";
 import Input from "../../common/form/FormikInput/FormikInput";
 import EmailSentModal from "../../common/modals/EmailSentModal/EmailSentModal";
 import { useState } from "react";
+import { apiPost } from "../../../services/axios.service";
+import { API } from "../../../utils/constants";
 
 const ForgotPassword = () => {
     const [show, setShow] = useState(false);
+    const [email, setEmail] = useState("");
     const initialValues = {
         username: "",
     };
-    const handleSubmit = () => {
+    const handleSubmit = async ({ username }: typeof initialValues) => {
+        let response = await apiPost<{ email: string }>({
+            url: API.FORGOT_PASSWORD,
+            data: { username, },
+        })
+        setEmail(response.data.email);
         setShow(true);
         return;
     }
@@ -29,6 +37,7 @@ const ForgotPassword = () => {
             </div>
             <EmailSentModal
                 show={show}
+                email={email}
                 handleClose={() => setShow(false)}
             />
         </>

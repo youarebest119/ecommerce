@@ -1,6 +1,7 @@
 import { ErrorMessage, Field } from "formik"
 import { TInput } from "../../../../interfaces/types"
 import ErrorMsg from "../ErrorMsg/ErrorMsg"
+import "../FormikInput/Input.scss";
 
 const Password = (props: TInput) => {
     const { label, className, name, type, ...rest } = props;

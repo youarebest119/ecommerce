@@ -120,6 +120,7 @@ export type TProductCard = {
 export type TEmailSentModal = {
     show?: boolean,
     handleClose?: () => void,
+    email?: string,
 }
 
 export type TConfirmationModal = {

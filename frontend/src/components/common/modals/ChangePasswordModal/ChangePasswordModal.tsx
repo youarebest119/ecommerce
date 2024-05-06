@@ -1,5 +1,7 @@
 import { Form, Formik } from "formik";
 import { useState } from "react";
+import { apiPut } from "../../../../services/axios.service";
+import { API } from "../../../../utils/constants";
 import Button from "../../Button/Button";
 import Password from "../../form/Password/Password";
 import CustomModal from "../CustomModal/CustomModal";
@@ -12,7 +14,13 @@ const ChangePasswordModal = () => {
         confirmPassword: "",
         oldPassword: "",
     };
-    const handleSubmit = () => {
+    const handleSubmit = async (values: typeof initialValues) => {
+        await apiPut({
+            url: API.UPDATE_PASSWORD,
+            data: values,
+            showToast: true,
+        });
+        setShow(false);
         return;
     }
 
