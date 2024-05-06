@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const validator = require("validator");
 const crypto = require("crypto");
+const { JWT_SECRET } = require("../utils/constants");
 
 const userSchema = mongoose.Schema({
     email: {
@@ -38,11 +39,18 @@ const userSchema = mongoose.Schema({
         required: true,
         default: false,
     },
+    isMailVerified: {
+        type: Boolean,
+        required: true,
+        default: false,
+    },
     token: {
         type: String,
     },
     resetPasswordToken: String,
     resetPasswordExpire: Date,
+    verifyEmailToken: String,
+    verifyEmailExpire: Date,
 }, {
     timestamps: true,
 });
@@ -58,7 +66,7 @@ userSchema.pre("save", async function (next) {
 
 // JWT TOKEN
 userSchema.methods.getJWTToken = function () {
-    return jwt.sign({ id: this._id }, process.env.JWT_SECRET);
+    return jwt.sign({ id: this._id }, JWT_SECRET);
 };
 
 // Compare Password
@@ -66,8 +74,6 @@ userSchema.methods.getJWTToken = function () {
 userSchema.methods.comparePassword = async function (password) {
     return await bcrypt.compare(password, this.password);
 };
-
-
 
 // Generating Password Reset Token
 userSchema.methods.getResetPasswordToken = function () {
@@ -81,6 +87,22 @@ userSchema.methods.getResetPasswordToken = function () {
         .digest("hex");
 
     this.resetPasswordExpire = Date.now() + 15 * 60 * 1000;
+
+    return resetToken;
+};
+
+// Generating Password Reset Token
+userSchema.methods.getVerifyEmailToken = function () {
+    // Generating Token
+    const resetToken = crypto.randomBytes(20).toString("hex");
+
+    // Hashing and adding resetPasswordToken to userSchema
+    this.verifyEmailToken = crypto
+        .createHash("sha256")
+        .update(resetToken)
+        .digest("hex");
+
+    this.verifyEmailExpire = Date.now() + 15 * 60 * 1000;
 
     return resetToken;
 };

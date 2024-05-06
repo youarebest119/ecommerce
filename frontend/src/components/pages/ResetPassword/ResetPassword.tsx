@@ -1,20 +1,24 @@
 import { Form, Formik } from "formik";
+import { useNavigate, useParams } from "react-router-dom";
 import { apiPut } from "../../../services/axios.service";
-import { API } from "../../../utils/constants";
+import { API, ROUTES } from "../../../utils/constants";
 import Button from "../../common/Button/Button";
 import Password from "../../common/form/Password/Password";
 
 const ResetPassword = () => {
+    const navigate =useNavigate();
+    const {token }  =useParams();
     const initialValues = {
         confirmPassword: "",
         password: "",
     };
     const handleSubmit = async (values: typeof initialValues) => {
-        const response = await apiPut({
-            url: API.RESET_PASSWORD,
+         await apiPut<{ token: string, }>({
+            url: API.RESET_PASSWORD.replace(":token", String(token)),
             data: values,
-        })
-        console.log('response', response);
+            showToast: true,
+        });
+        navigate(ROUTES.LOGIN);
         return;
     }
     return (

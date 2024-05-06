@@ -3,22 +3,19 @@ const User = require("../models/user");
 const ErrorHandler = require("../utils/errorHandlers");
 const { sendToken } = require("../utils/sendToken");
 const crypto = require("crypto");
-const emailjs = require("@emailjs/nodejs");
+const { sendEmail } = require("../utils/sendEmail");
+const { sendResponse } = require("../utils/sendResponse");
+const { AVATAR_URL, LAZY_TIME, FRONTEND_PORT, EMAIL_JS } = require("../utils/constants");
 
 exports.registerUser = catchAsyncErrors(async (req, res) => {
     let newUser = new User({
         ...req.body,
         profilePic: {
-            url: process.env.AVATAR_URL,
+            url: AVATAR_URL,
         },
     })
     await newUser.save();
-    setTimeout(() => {
-        res.status(200).json({
-            success: true,
-            message: "user registered",
-        })
-    }, process.env.LAZY_TIME);
+    sendResponse(res, 200, "user registered successfully, please verify your email address");
 });
 
 exports.loginUser = catchAsyncErrors(async (req, res, next) => {
@@ -40,18 +37,13 @@ exports.loginUser = catchAsyncErrors(async (req, res, next) => {
     if (!isPasswordMatched) {
         return next(new ErrorHandler("Invalid email or password", 401));
     }
+
     sendToken(user, res);
 })
 
 exports.getUserDetails = catchAsyncErrors(async (req, res, next) => {
-    let user = await User.findOne({ _id: req.user._id }).select("-password");
-    setTimeout(() => {
-        res.status(200).json({
-            success: true,
-            data: user,
-            message: "user fetched",
-        })
-    }, process.env.LAZY_TIME);
+    let user = await User.findOne({ _id: req.user._id, }).select("-password");
+    sendResponse(res, 200, "user fetched", { data: user, })
 })
 
 
@@ -61,23 +53,90 @@ exports.logout = catchAsyncErrors(async (req, res, next) => {
         expires: new Date(Date.now()),
         httpOnly: true,
     });
-
-    res.status(200).json({
-        success: true,
-        message: "Logged Out",
-    });
+    sendResponse(res, 200, "Logged Out")
 });
 
+// verify email url
 
+exports.sendVerifyEmailUrl = catchAsyncErrors(async (req, res, next) => {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
 
+    if (!user) {
+        return next(new ErrorHandler("User not found", 404));
+    }
+
+    if (user.isMailVerified) {
+        sendResponse(res, 409, `Email already verified`, { emailVerified: true, })
+    }
+
+    // Get verify email Token
+    const resetToken = user.getVerifyEmailToken();
+
+    await user.save({ validateBeforeSave: false });
+
+    const verifyEmailUrl = `${req.protocol}://localhost:${FRONTEND_PORT}/verify-email/${resetToken}`;
+
+    try {
+        const templateParams = {
+            'verify-url': verifyEmailUrl,
+            'email': user.email,
+            'username': user.username,
+        };
+
+        await sendEmail(EMAIL_JS.CONFIRM_EMAIL_TEMPLATE_ID, templateParams);
+        sendResponse(res, 200, `Email sent to ${user.email} successfully`, { email: user.email, username: user.username, });
+    } catch (error) {
+        user.verifyEmailToken = undefined;
+        user.verifyEmailExpire = undefined;
+
+        await user.save({ validateBeforeSave: false });
+
+        return next(new ErrorHandler(error.text || error.message, 500));
+    }
+});
+
+// verify email address
+exports.verifyEmail = catchAsyncErrors(async (req, res, next) => {
+    // creating token hash
+    const verifyEmailToken = crypto
+        .createHash("sha256")
+        .update(req.params.token)
+        .digest("hex");
+
+    const user = await User.findOne({
+        verifyEmailToken,
+        verifyEmailExpire: { $gt: Date.now() },
+    });
+
+    if (!user) {
+        return next(
+            new ErrorHandler(
+                "Verify email url is invalid or has been expired",
+                400
+            )
+        );
+    }
+
+    user.isMailVerified = true;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+
+    await user.save();
+    sendResponse(res, 200, "Email verified successfully")
+});
 
 // Forgot Password
 exports.forgotPassword = catchAsyncErrors(async (req, res, next) => {
     const { username } = req.body;
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ username, });
 
     if (!user) {
         return next(new ErrorHandler("User not found", 404));
+    }
+
+    if(!user.isMailVerified) {
+        return next(new ErrorHandler("Email not verified, please verify your email first", 401));
     }
 
     // Get ResetPassword Token
@@ -88,7 +147,7 @@ exports.forgotPassword = catchAsyncErrors(async (req, res, next) => {
     // const resetPasswordUrl = `${req.protocol}://${req.get(
     //     "host"
     // )}/password/reset/${resetToken}`;
-    const resetPasswordUrl = `${req.protocol}://localhost:${process.env.FRONTEND_PORT}/reset-password/${resetToken}`;
+    const resetPasswordUrl = `${req.protocol}://localhost:${FRONTEND_PORT}/reset-password/${resetToken}`;
 
     try {
         const templateParams = {
@@ -97,17 +156,8 @@ exports.forgotPassword = catchAsyncErrors(async (req, res, next) => {
             "subject": "Password Recovery",
         };
 
-        await emailjs
-            .send('service_x5dbaxp', 'template_mofuqsg', templateParams, {
-                publicKey: 'qRvnABZdIwr1S39sP',
-                privateKey: 'vziYnEcOzpM8_epeDP1RC', // optional, highly recommended for security reasons
-            })
-
-        res.status(200).json({
-            success: true,
-            message: `Email sent to ${user.email} successfully`,
-            email: user.email,
-        });
+        await sendEmail(EMAIL_JS.RESET_PASSWORD_TEMPLATE_ID, templateParams);
+        sendResponse(res, 200, `Email sent to ${user.email} successfully`, { email: user.email })
     } catch (error) {
         user.resetPasswordToken = undefined;
         user.resetPasswordExpire = undefined;
@@ -128,6 +178,7 @@ exports.resetPassword = catchAsyncErrors(async (req, res, next) => {
 
     const user = await User.findOne({
         resetPasswordToken,
+        isMailVerified: true,
         resetPasswordExpire: { $gt: Date.now() },
     });
 
@@ -149,8 +200,7 @@ exports.resetPassword = catchAsyncErrors(async (req, res, next) => {
     user.resetPasswordExpire = undefined;
 
     await user.save();
-
-    sendToken(user, res);
+    sendResponse(res, 200, "Password reset successfully")
 });
 
 
@@ -191,10 +241,7 @@ exports.updateProfile = catchAsyncErrors(async (req, res, next) => {
         useFindAndModify: false,
     });
 
-    res.status(200).json({
-        success: true,
-        message: "Profile updated successfully",
-    });
+    sendResponse(res, 200, "Profile updated successfully");
 });
 
 // Delete User --Admin
@@ -208,8 +255,6 @@ exports.deleteUser = catchAsyncErrors(async (req, res, next) => {
     }
     await user.deleteOne();
 
-    res.status(200).json({
-        success: true,
-        message: "User Deleted Successfully",
-    });
+    sendResponse(res, 200, "User Deleted Successfully");
+
 });

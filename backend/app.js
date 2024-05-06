@@ -7,6 +7,7 @@ const mongoose = require("mongoose");
 const cors = require('cors');
 dotenv.config();
 const app = express();
+const { DB_URI } = require("./utils/constants");
 
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json());
@@ -19,7 +20,7 @@ app.use(express.static(__dirname + '/images'));
 
 mongoose.Promise = global.Promise;
 const connectDb = async () => {
-    await mongoose.connect(process.env.DB_URI, {});
+    await mongoose.connect(DB_URI, {});
 }
 
 connectDb();

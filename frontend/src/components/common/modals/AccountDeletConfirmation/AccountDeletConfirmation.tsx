@@ -1,16 +1,32 @@
-import { Form, Formik } from "formik";
+import { Form, Formik, FormikHelpers } from "formik";
 import { useState } from "react";
+import { useAppSelector } from "../../../../app/hooks";
+import useLogout from "../../../../hooks/useLogout";
+import { apiDelete } from "../../../../services/axios.service";
+import { API } from "../../../../utils/constants";
 import Button from "../../Button/Button";
-import Input from "../../form/Input/Input";
+import FormikInput from "../../form/FormikInput/FormikInput";
 import CustomModal from "../CustomModal/CustomModal";
 import "./AccountDeletConfirmation.scss";
 
 const AccountDeletConfirmation = () => {
+    const { details } = useAppSelector(state => state.user);
     const [show, setShow] = useState(false);
+    const logout = useLogout();
     const initialValues = {
         username: "",
     };
-    const handleSubmit = () => {
+    const handleSubmit = async ({ username }: typeof initialValues, formikHelpers: FormikHelpers<{ username: string; }>) => {
+        if (username === details?.username) {
+            await apiDelete({
+                url: API.DELETE_USER,
+                showToast: true,
+            })
+            setShow(false);
+            logout();
+        } else {
+            formikHelpers.setErrors({ username: "Wrong username entered" })
+        }
         return;
     }
 
@@ -29,7 +45,7 @@ const AccountDeletConfirmation = () => {
                     onSubmit={handleSubmit}
                 >
                     <Form>
-                        <Input name="username" placeholder="Username" label="Type in the username of your account to confirm " />
+                        <FormikInput name="username" placeholder="Username" label="Type in the username of your account to confirm " />
                         <Button fluid className="mt-5 danger_btn" type={"submit"}>Continue</Button>
                     </Form>
                 </Formik>

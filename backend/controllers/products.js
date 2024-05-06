@@ -1,6 +1,8 @@
 const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
 const Product = require("../models/product");
+const { LAZY_TIME, PRODUCT_PER_PAGE } = require("../utils/constants");
 const ErrorHandler = require("../utils/errorHandlers");
+const { sendResponse } = require("../utils/sendResponse");
 
 exports.createProduct = catchAsyncErrors(async (req, res, next) => {
     let {
@@ -52,13 +54,7 @@ exports.createProduct = catchAsyncErrors(async (req, res, next) => {
     await product.save();
     const newProduct = JSON.parse(JSON.stringify(product));
     delete newProduct.author;
-    setTimeout(() => {
-        res.status(200).json({
-            success: true,
-            data: newProduct,
-            message: "Product created",
-        })
-    }, process.env.LAZY_TIME);
+    sendResponse(res, 200, "Product created", { data: newProduct, })
 });
 
 exports.getAllProducts = catchAsyncErrors(async (req, res) => {
@@ -120,23 +116,20 @@ exports.getAllProducts = catchAsyncErrors(async (req, res) => {
     const { page } = req.query;
     const { sort } = req.query;
 
-    const products = await Product.find(query).limit(process.env.PRODUCT_PER_PAGE).skip(((page || 1) - 1) * process.env.PRODUCT_PER_PAGE).sort({
+    const products = await Product.find(query).limit(PRODUCT_PER_PAGE).skip(((page || 1) - 1) * PRODUCT_PER_PAGE).sort({
         updatedAt: sort !== "asc" ? -1 : 1
     });
     const fetched = await Product.find(query);
     const total = await Product.find({
         // author: req.body.author,
     })
-    setTimeout(() => {
-        res.status(200).json({
-            success: true,
-            data: products,
-            message: "product fetched",
-            total: fetched.length,
-            fetched: products.length,
-            dataPerPage: process.env.PRODUCT_PER_PAGE,
-        });
-    }, process.env.LAZY_TIME);
+    sendResponse(res, 200, "product fetched", {
+        total: fetched.length,
+        fetched: products.length,
+        dataPerPage: PRODUCT_PER_PAGE,
+        data: products,
+        message: "product fetched",
+    })
 })
 
 exports.getSingleProduct = catchAsyncErrors(async (req, res) => {
@@ -150,13 +143,7 @@ exports.getSingleProduct = catchAsyncErrors(async (req, res) => {
         _id: req.params.id,
     }
     const product = await Product.findOne(query).select("-reviews");
-    setTimeout(() => {
-        res.status(200).json({
-            success: true,
-            data: product,
-            message: "product fetched",
-        })
-    }, process.env.LAZY_TIME);
+    sendResponse(res, 200, "Product fetched", { data: product })
 })
 exports.deleteProduct = catchAsyncErrors(async (req, res) => {
     const query = {
@@ -199,11 +186,5 @@ exports.getCategories = catchAsyncErrors(async (req, res) => {
             },
         }
     ]);
-    setTimeout(() => {
-        res.status(200).json({
-            success: true,
-            data: product,
-            message: "product categories fetched",
-        })
-    }, 4000);
+    sendResponse(res, 200, "product categories fetched", { data: product })
 })
